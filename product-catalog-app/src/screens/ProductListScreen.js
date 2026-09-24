@@ -1,9 +1,22 @@
 import React from "react";
 import { FlatList, ActivityIndicator, View, Text } from "react-native";
 import { useProducts } from "../hooks/useProducts";
+import { EmptyView, ErrorView, LoadingView } from "../components/StateViews";
 
 export default function ProductListScreen({ navigation }) {
-	const { products, status, loadMore } = useProducts();
+	const { products, status, retry, errorMessage, loadMore } = useProducts();
+
+	if (status === "loading") {
+		return <LoadingView />;
+	}
+
+	if (status === "error") {
+		return <ErrorView message={errorMessage} onRetry={retry} />;
+	}
+
+	if (status === "success" && products.length === 0) {
+		return <EmptyView />;
+	}
 
 	return (
 		// use flatlist bc have scroll loading, pull to refresh,
